@@ -1,3 +1,4 @@
+# Используем Python 3.11 с базового образа из GitLab
 FROM registry.gitlab.com/unienv/images/python:3.11
 
 ENV PYTHONUNBUFFERED 1
@@ -23,5 +24,6 @@ RUN pre-commit run -a && python manage.py collectstatic --noinput
 
 ENV PORT 8000
 
+EXPOSE 8000
 
-CMD python manage.py migrate && uwsgi --ini deploy/python/uwsgi.ini --http-socket :$PORT --static-map /api/static=/app/static
+CMD ["uwsgi", "--ini", "deploy/python/uwsgi.ini", "--http-socket", ":$PORT", "--static-map", "/api/static=/app/static"]

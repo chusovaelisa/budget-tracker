@@ -1,66 +1,54 @@
 version: '3'
 
 services:
-  nginx:
+  # Сервис для бэкенда Django
+  backend:
     build:
-      context: .
-      dockerfile: deploy/nginx/Dockerfile
+      context: ./deploy/python  # Указываем директорию с Dockerfile для бэкенда
+      dockerfile: Dockerfile    # Указываем путь к Dockerfile для бэкенда
+    container_name: django-backend
     ports:
-      - 80:80
+      - "8000:8000"
     volumes:
-      - ./media/category:/app/media/category
-      - static:/app/static
-      - ./budget-tracker-vue/dist:/usr/share/nginx/html
-    depends_on:
-      - app
-      - frontend
-    restart: always
-
-  frontend:
-    build:
-      context: .
-      dockerfile: deploy/frontend/Dockerfile
-    restart: always
-    depends_on:
-      - app
-
-
-  app:
-    build:
-      context: .
-      dockerfile: deploy/python/Dockerfile
-      args:
-        SITE_ID: ${SITE_ID}
+      - ./app:/app
+      - ./media:/app/media  # Для хранения медиафайлов
+      - ./static:/app/static  # Для хранения статики
     environment:
-      DB_HOST: db
-      SITE_ID: ${SITE_ID}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      MPLCONFIGDIR: /app/.cache/matplotlib
+      - DEBUG=true
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=budget_tracker
+      - DB_USER=postgres
+      - DB_PASSWORD=kbpf
     depends_on:
       - db
-    env_file:
-      - .env
-    volumes:
-      - ./media/category:/app/media/category
-      - static:/app/static
-      - ./app_cache:/app/.cache
     restart: always
 
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+  # Сервис для фронтенда Vue.js
+  frontend:
+    build:
+      context: ./deploy/frontend  # Указываем путь к проекту Vue.js
+      dockerfile: Dockerfile      # Указываем путь к Dockerfile для фронтенда
+    container_name: vue-frontend
+    ports:
+      - "8080:80"  # Проброс порта для фронтенда (обычно 80 для Nginx)
     volumes:
-      - "db:/var/lib/postgresql/data"
+      - ./frontend:/app
+    restart: always
+
+  # Сервис для базы данных PostgreSQL
+  db:
+    image: postgres:14
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kbpf
+      POSTGRES_DB: budget_tracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     restart: always
 
 volumes:
-  db:
-  media:
-  static:
-  app_cache:
+  postgres_data:

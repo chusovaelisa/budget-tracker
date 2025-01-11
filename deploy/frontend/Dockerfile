@@ -1,17 +1,23 @@
-FROM node:18-alpine
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
 COPY budget-tracker-vue/package*.json ./
+
 RUN npm install
 
 COPY budget-tracker-vue ./
 
 RUN npm run build
 
-RUN aws --endpoint-url=https://storage.yandexcloud.net s3 rm --recursive s3://frontend-budget-tracker
-RUN aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive build/ s3://frontend-budget-tracker/
+FROM nginx:alpine
 
+COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN aws --endpoint-url=https://storage.yandexcloud.net s3 rm --recursive s3://media-budget-tracker
-RUN aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive build/ s3://media-budget-tracker/
+# Копируем кастомный конфиг для Nginx, если он есть
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+# Запускаем Nginx
+CMD ["nginx", "-g", "daemon off;"]
