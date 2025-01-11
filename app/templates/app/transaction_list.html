@@ -1,0 +1,14 @@
+{% for transaction in transactions %}
+      <li>
+        {% if transaction.type == "income" %}
+          +{{ transaction.amount }}
+        {% elif transaction.type == "expense" %}
+          -{{ transaction.amount }}
+        {% endif %}
+        - {{ transaction.date|date:"d.m.Y" }}
+        - {{ transaction.description }} -
+        {{ transaction.category.name }}
+      </li>
+    {% empty %}
+      <li>No transactions found.</li>
+{% endfor %}

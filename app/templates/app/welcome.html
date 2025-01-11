@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/welcome.css' %}"/>
+    <title>Welcome</title>
+</head>
+
+<body>
+<div class="container" id="container">
+    <div class="left-info">
+        <div class="title">
+            <h1>Budget-Tracker:</h1>
+        </div>
+        <ul>
+            <li>
+                <span class="material-icons-sharp">
+                    check
+                </span>
+                Учет в Telegram и на сайте.
+            </li>
+            <li>
+                <span class="material-icons-sharp">
+                    check
+                </span>
+                Диаграммы и анализ.
+            </li>
+            <li>
+                <span class="material-icons-sharp">
+                    check
+                </span>
+                Экспорт данных в Excel.
+            </li>
+            <li>
+                <span class="material-icons-sharp">
+                    check
+                </span>
+                Эффективное управление финансами.
+            </li>
+        </ul>
+        <p>Присоединяйтесь к Budget Tracker и начните управлять своим бюджетом проще и эффективнее!</p>
+        <a href="{% url 'registration' %}" class="btn">Присоединиться</a>
+
+    </div>
+    <div class="right-info">
+        <div class="pic-gradient">
+            <img src="{% static 'images/welcome.jpg' %}" alt="Welcome Image">
+        </div>
+
+        <div class="info">
+            <p>Здесь вы найдете идеальное сочетание удобства и функциональности для отслеживания ваших доходов и
+                расходов.
+            <p>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block extrastyles %}
+    <link rel="stylesheet" href="{% static 'css/transaction-diagram.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Анализ</h1>
+
+    {% if not user.is_anonymous %}
+        <div class="charts-container">
+            {% if income_chart %}
+                <div class="chart_transaction">
+                    <h2>Доходы</h2>
+                    <img src="data:image/png;base64,{{ income_chart }}" alt="Доходы" class="chart">
+                    <div class="top-categories">
+                        {% for category, data in income_top_categories.items %}
+                            <div class="category-item">
+                                <span class="category-color" style="background-color:{{ data.color }}"></span>
+                                {{ category }} - {{ data.total }} ₽
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if expense_chart %}
+                <div class="chart_transaction">
+                    <h2>Расходы</h2>
+                    <img src="data:image/png;base64,{{ expense_chart }}" alt="Расходы" class="chart">
+                    <div class="top-categories">
+                        {% for category, data in expense_top_categories.items %}
+                            <div class="category-item">
+                                <span class="category-color" style="background-color:{{ data.color }}"></span>
+                                {{ category }} - {{ data.total }} ₽
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% endblock %}

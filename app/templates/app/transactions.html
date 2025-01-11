@@ -1,0 +1,67 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/transactions.css' %}">
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"/>
+<script src="{% static 'js/descriptions.js' %}"></script>
+<div class="page-container">
+    <div class="transactions">
+        <h2>Транзакции</h2>
+        <div class="scrollable-content">
+            {% for transaction in transactions %}
+            <div class="transaction-item">
+            <span class="category-circle" style="background-color: {{ transaction.category.color }};">
+                <img src="{{ transaction.category.logo.url }}" alt="{{ transaction.category.name }}"
+                     class="category-icon">
+            </span>
+                <div class="transaction-details">
+                    <span class="transaction-name">{{ transaction.category.name }}</span>
+                    <span>{{ transaction.date|date:"d.m.Y" }}</span>
+                    {% if transaction.type == "income" %}
+                    <span class="transaction-amount transaction-income">+{{ transaction.formatted_amount }} ₽</span>
+                    {% elif transaction.type == "expense" %}
+                    <span class="transaction-amount transaction-expense">-{{ transaction.formatted_amount }} ₽</span>
+                    {% endif %}
+                </div>
+                <div class="transaction-actions">
+                    <div class="transaction-description"
+                         {% if not transaction.description %}
+                         title="Показать описание"
+                         {% endif %}
+                         data-description="{{ transaction.description }}">
+                        <span class="material-symbols-outlined">more_horiz</span>
+                    </div>
+
+                    <a href="{% url 'edit_transaction' transaction.id %}" title="Редактировать">
+                        <span class="material-symbols-outlined" title="Редактировать">edit</span>
+                    </a>
+
+                    <form action="{% url 'delete_transaction' transaction.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="transparent-button">
+                        <span class="material-symbols-outlined" title="Удалить">
+                            delete_sweep
+                        </span>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            {% empty %}
+            <p>No transactions found.</p>
+            {% endfor %}
+        </div>
+        <div class="transaction-tooltip" id="tooltip"></div>
+    </div>
+</div>
+
+{% if not user.is_anonymous %}
+<div class="page-container">
+    <a href="{% url 'add_transaction' %}" class="button-link add-transaction-button" title="Добавить транзакцию">
+        <span class="material-symbols-outlined" title="Добавить транзакцию">add_box</span>
+    </a>
+</div>
+{% endif %}
+{% endblock %}

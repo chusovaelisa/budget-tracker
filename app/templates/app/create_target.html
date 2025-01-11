@@ -1,0 +1,27 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block extrastyles %}
+    <link rel="stylesheet" href="{% static 'css/target.css' %}">
+{% endblock %}
+{% block title %}<h1>Создать цель</h1>{% endblock %}
+
+{% block content %}
+   <form method="post" class="base">
+        <div class="group">
+            <div class="status">
+                <div class="info-с">
+                    {% csrf_token %}
+                    <p>Название:</p>
+                    <p>{{ form.name }}</p>
+                    <p>Целевая сумма:</p>
+                    <p>{{ form.target_sum }}</p>
+                    <button type="submit">Сохранить</button>
+                </div>
+                <div class="text">
+                    Совет классический:<br><br> Для целей лучше использовать короткие названия
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

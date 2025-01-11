@@ -1,0 +1,27 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block extrastyles %}
+    <link rel="stylesheet" href="{% static 'css/limit.css' %}">{% endblock %}
+{% block title %}<h1>Редактировать лимит</h1>{% endblock %}
+
+{% block content %}
+    <form method="post" class="base">
+        <div class="group">
+            <div class="status">
+                <div class="info">
+                    {% csrf_token %}
+                    <p>Лимит на:</p>
+                    <p>{{ form.amount }}</p>
+                    <p>Дата окончания:</p>
+                    <p>{{ form.end_date }}</p>
+                    <button type="submit">Сохранить</button>
+                </div>
+                <div class="text">
+                    Без указания даты, лимит по умолчанию будет выставлен на 30 дней
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

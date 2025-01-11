@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "budget-tracker"
+version = "0.1.0"
+description = ""
+authors = ["Galieva Iluza <galievailyu@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "5.0.2"
+psycopg2 = "2.9.9"
+python-dotenv = "1.0.1"
+pillow = "10.2.0"
+pytelegrambotapi = "4.16.1"
+pandas = "2.2.1"
+xlsxwriter = "3.2.0"
+matplotlib = "^3.8.3"
+django-cors-headers = "^4.3.1"
+djangorestframework = "^3.15.1"
+pyjwt = "^2.8.0"
+djangorestframework-simplejwt = "^5.3.1"
+uwsgi = "2.0.25.1"
+django-storages = "^1.14.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

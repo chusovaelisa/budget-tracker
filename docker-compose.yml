@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: deploy/nginx/Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - ./media/category:/app/media/category
+      - static:/app/static
+      - ./budget-tracker-vue/dist:/usr/share/nginx/html
+    depends_on:
+      - app
+      - frontend
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/frontend/Dockerfile
+    restart: always
+    depends_on:
+      - app
+
+
+  app:
+    build:
+      context: .
+      dockerfile: deploy/python/Dockerfile
+      args:
+        SITE_ID: ${SITE_ID}
+    environment:
+      DB_HOST: db
+      SITE_ID: ${SITE_ID}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      MPLCONFIGDIR: /app/.cache/matplotlib
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./media/category:/app/media/category
+      - static:/app/static
+      - ./app_cache:/app/.cache
+    restart: always
+
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - "db:/var/lib/postgresql/data"
+    restart: always
+
+volumes:
+  db:
+  media:
+  static:
+  app_cache:

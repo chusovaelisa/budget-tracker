@@ -1,0 +1,123 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block extrastyles %}
+    <link rel="stylesheet" href="{% static 'css/transaction-diagram.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"/>
+    <link href="{% static 'web-app/assets/index.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}<h1>Главная страница</h1>{% endblock %}
+
+{% block content %}
+    {% if not user.is_anonymous %}
+        <div class="line">
+            <div class="base">
+                {% if limit %}
+                    <div class="group">
+                        <div class="status">
+                            <div class="info">
+                                <h3>Лимит на: </h3>
+                                <p>{{ limit.amount }} </p>
+                                <h3>Осталось тратить: </h3>
+                                <p>{{ remaining_limit }}</p>
+                                <h3>Начало: </h3>
+                                <p>{{ limit.start_date }}</p>
+                                <h3>Конец: </h3>
+                                <p>{{ limit.end_date }}</p>
+                            </div>
+                            <div class="edit">
+                                <a href="{% url 'edit_limit' limit.id %}">
+                                    <button class="btn-limit" type="submit">Редактировать</button>
+                                </a>
+                                <form action="{% url 'delete_limit' limit.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn-limit" type="submit">Удалить</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty">
+                        <h2>Лимита нет 😔</h2>
+                        {% if not user.is_anonymous %}
+                            <a href="{% url 'create_limit' %}">
+                                <button class="btn-limit">Добавить лимит</button>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="base_target">
+                {% for target in targets %}
+                    <div class="group">
+                        <div class="status">
+                            <div class="info">
+                                {% if target.reached == 100 %}
+                                    <h2>Цель достигнута!</h2>
+                                    <p>🎉😎👍</p>
+                                {% else %}
+                                    <h3 class="target-name">{{ target.name }}</h3>
+                                    <h3>Цель: {{ target.target_sum }}</h3>
+                                    <p> Накоплено: {{ target.current_sum }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="edit">
+                                <a href="{% url 'edit_target' target.id %}">
+                                    <span class="material-symbols-outlined" title="Редактировать">edit</span>
+                                </a>
+                                <form action="{% url 'delete_target' target.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="transparent-button">
+                                        <span class="material-symbols-outlined" title="Удалить">
+                                                delete_sweep
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">
+                        <h2>Целей нет 😔</h2>
+                    </div>
+                {% endfor %}
+
+                {% if not user.is_anonymous %}
+                    <a href="{% url 'create_target' %}">
+                        <button class="btn-limit">Добавить цель</button>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="app"></div>
+        <script src="{% static 'web-app/assets/index.js' %}"></script>
+
+        <div id="transaction-list">
+            {% include 'app/transaction_list.html' %}
+        </div>
+
+        <div class="charts-container">
+            {% if income_chart %}
+                <div class="chart_transaction">
+                    <h2>График доходов</h2>
+                    <img src="data:image/png;base64,{{ income_chart }}" alt="Доходы" class="chart">
+                </div>
+            {% endif %}
+
+            {% if expense_chart %}
+                <div class="chart_transaction">
+                    <h2>График расходов</h2>
+                    <img src="data:image/png;base64,{{ expense_chart }}" alt="Расходы" class="chart">
+                </div>
+            {% endif %}
+        </div>
+        <a href="{% url 'analys' %}">Подробнее</a>
+    {% endif %}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}

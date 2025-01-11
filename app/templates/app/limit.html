@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block extrastyles %}<link rel="stylesheet" href="{% static 'css/limit.css' %}">{% endblock %}
+{% block title %}<h1>Лимит</h1>{% endblock %}
+
+{% block content %}
+    <div class="base">
+        {% if limit %}
+            <div class="group">
+                <div class="status">
+                    <div class="info">
+                        <h3>Лимит на: </h3><p>{{ limit.amount }} </p>
+                        <h3>Осталось тратить: </h3><p>{{ remaining_limit }}</p>
+                        <h3>Начало: </h3><p>{{ limit.start_date }}</p>
+                        <h3>Конец: </h3><p>{{ limit.end_date }}</p>
+                    </div>
+                     <div class="edit">
+                         <a href="{% url 'edit_limit' limit.id %}">
+                             <button type="submit">Редактировать</button>
+                         </a>
+                        <form action="{% url 'delete_limit' limit.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Удалить</button>
+                        </form>
+                     </div>
+                </div>
+            </div>
+    {% else %}
+            <div class="empty">
+                <h2>Лимита нет 😔</h2>
+                {% if not user.is_anonymous %}
+                    <a href="{% url 'create_limit' %}">
+                        <button>Добавить лимит</button>
+                    </a>
+                {% endif %}
+            </div>
+    {% endif %}
+    </div>
+{% endblock %}
